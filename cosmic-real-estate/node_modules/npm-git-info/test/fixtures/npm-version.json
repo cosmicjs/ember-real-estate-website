@@ -1,0 +1,143 @@
+{
+  "_args": [
+    [
+      "ember-data@2.4.0",
+      "/Users/arrested/development/github/npm-git-info"
+    ]
+  ],
+  "_from": "ember-data@2.4.0",
+  "_id": "ember-data@2.4.0",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/ember-data",
+  "_nodeVersion": "5.5.0",
+  "_npmOperationalInternal": {
+    "host": "packages-6-west.internal.npmjs.com",
+    "tmp": "tmp/ember-data-2.4.0.tgz_1456793181101_0.6412536094430834"
+  },
+  "_npmVersion": "2.14.10",
+  "_phantomChildren": {},
+  "_requested": {
+    "name": "ember-data",
+    "raw": "ember-data@2.4.0",
+    "rawSpec": "2.4.0",
+    "scope": null,
+    "spec": "2.4.0",
+    "type": "version"
+  },
+  "_requiredBy": [
+    "#USER"
+  ],
+  "_resolved": "https://registry.npmjs.org/ember-data/-/ember-data-2.4.0.tgz",
+  "_shasum": "83def81b807dc5796634f86a26f9edadf1dbfb68",
+  "_shrinkwrap": null,
+  "_spec": "ember-data@2.4.0",
+  "_where": "/Users/clemens/development/githubs/npm-git-info",
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/emberjs/data/issues"
+  },
+  "dependencies": {
+    "babel-plugin-feature-flags": "^0.2.0",
+    "babel-plugin-filter-imports": "^0.2.0",
+    "broccoli-babel-transpiler": "^5.5.0",
+    "broccoli-file-creator": "^1.0.0",
+    "broccoli-merge-trees": "^1.0.0",
+    "chalk": "^1.1.1",
+    "ember-cli-babel": "^5.1.3",
+    "ember-cli-path-utils": "^1.0.0",
+    "ember-cli-string-utils": "^1.0.0",
+    "ember-cli-test-info": "^1.0.0",
+    "ember-cli-version-checker": "^1.1.4",
+    "ember-inflector": "^1.9.4",
+    "exists-sync": "0.0.3",
+    "git-repo-info": "^1.1.2",
+    "inflection": "^1.8.0",
+    "npm-git-info": "^1.0.0",
+    "semver": "^5.1.0",
+    "silent-error": "^1.0.0"
+  },
+  "description": "A data layer for your Ember applications.",
+  "devDependencies": {
+    "bower": "^1.6.5",
+    "broccoli-asset-rev": "^2.1.2",
+    "broccoli-concat": "0.0.13",
+    "broccoli-funnel": "^1.0.0",
+    "broccoli-jscs": "^1.1.0",
+    "broccoli-stew": "^1.0.1",
+    "broccoli-string-replace": "^0.1.1",
+    "broccoli-uglify-sourcemap": "^1.0.1",
+    "broccoli-yuidoc": "^2.1.0",
+    "ember-cli": "1.13.12",
+    "ember-cli-app-version": "0.5.0",
+    "ember-cli-blueprint-test-helpers": "^0.8.0",
+    "ember-cli-content-security-policy": "0.4.0",
+    "ember-cli-dependency-checker": "^1.0.1",
+    "ember-cli-htmlbars": "0.7.9",
+    "ember-cli-htmlbars-inline-precompile": "^0.2.0",
+    "ember-cli-ic-ajax": "0.2.1",
+    "ember-cli-inject-live-reload": "^1.3.1",
+    "ember-cli-internal-test-helpers": "^0.8.0",
+    "ember-cli-qunit": "^1.0.0",
+    "ember-cli-release": "0.2.3",
+    "ember-cli-uglify": "^1.2.0",
+    "ember-disable-prototype-extensions": "^1.0.0",
+    "ember-disable-proxy-controllers": "^1.0.0",
+    "ember-export-application-global": "^1.0.3",
+    "ember-publisher": "0.0.7",
+    "ember-try": "0.0.6",
+    "ember-watson": "^0.7.0",
+    "github": "^0.2.4",
+    "glob": "^5.0.13",
+    "mocha": "^2.3.4",
+    "mocha-only-detector": "0.0.2",
+    "rimraf": "^2.3.2",
+    "rsvp": "^3.1.0"
+  },
+  "directories": {
+    "doc": "doc",
+    "test": "tests"
+  },
+  "dist": {
+    "shasum": "83def81b807dc5796634f86a26f9edadf1dbfb68",
+    "tarball": "http://registry.npmjs.org/ember-data/-/ember-data-2.4.0.tgz"
+  },
+  "ember-addon": {
+    "after": "ember-cli-mocha",
+    "configPath": "tests/dummy/config",
+    "paths": [
+      "lib/enable-optional-features-via-url"
+    ]
+  },
+  "engines": {
+    "node": ">= 0.10.0"
+  },
+  "gitHead": "9f8c40927a5e8a7966c251d99eb26c3f1fb0606e",
+  "homepage": "https://github.com/emberjs/data#readme",
+  "keywords": [
+    "ember-addon"
+  ],
+  "license": "MIT",
+  "maintainers": [
+  ],
+  "name": "ember-data",
+  "optionalDependencies": {},
+  "peerDependencies": {
+    "ember-inflector": "^1.9.4"
+  },
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/emberjs/data.git"
+  },
+  "scripts": {
+    "bower": "bower install",
+    "build": "ember build",
+    "node-tests": "node node-tests/nodetest-runner.js",
+    "production": "ember build --environment=production",
+    "start": "ember server",
+    "test": "ember try:testall",
+    "test:optional-features": "ember test --environment=test-optional-features"
+  },
+  "version": "2.4.0"
+}

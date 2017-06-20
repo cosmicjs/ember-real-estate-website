@@ -1,0 +1,6 @@
+define("ember-bootstrap/templates/components/bs-modal/footer", ["exports"], function (exports) {
+  "use strict";
+
+  exports.__esModule = true;
+  exports.default = Ember.HTMLBars.template({ "id": "+O39I5uL", "block": "{\"statements\":[[6,[\"if\"],[[29,\"default\"]],null,{\"statements\":[[0,\"  \"],[18,\"default\"],[0,\"\\n\"]],\"locals\":[]},{\"statements\":[[6,[\"if\"],[[28,[\"hasSubmitButton\"]]],null,{\"statements\":[[0,\"    \"],[6,[\"bs-button\"],null,[[\"onClick\"],[[33,[\"action\"],[[28,[null]],[28,[\"onClose\"]]],null]]],{\"statements\":[[1,[26,[\"closeTitle\"]],false]],\"locals\":[]},null],[0,\"\\n    \"],[6,[\"bs-button\"],null,[[\"type\",\"onClick\",\"disabled\"],[\"primary\",[33,[\"action\"],[[28,[null]],[28,[\"onSubmit\"]]],null],[28,[\"submitDisabled\"]]]],{\"statements\":[[1,[26,[\"submitTitle\"]],false]],\"locals\":[]},null],[0,\"\\n\"]],\"locals\":[]},{\"statements\":[[0,\"    \"],[6,[\"bs-button\"],null,[[\"type\",\"onClick\"],[\"primary\",[33,[\"action\"],[[28,[null]],[28,[\"onClose\"]]],null]]],{\"statements\":[[1,[26,[\"closeTitle\"]],false]],\"locals\":[]},null],[0,\"\\n\"]],\"locals\":[]}]],\"locals\":[]}]],\"locals\":[],\"named\":[],\"yields\":[\"default\"],\"hasPartials\":false}", "meta": { "moduleName": "ember-bootstrap/templates/components/bs-modal/footer.hbs" } });
+});

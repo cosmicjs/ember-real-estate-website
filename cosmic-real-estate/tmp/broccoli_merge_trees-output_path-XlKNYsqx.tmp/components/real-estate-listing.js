@@ -1,0 +1,1 @@
+D:/cosmic-real-estate/app/components/real-estate-listing.js

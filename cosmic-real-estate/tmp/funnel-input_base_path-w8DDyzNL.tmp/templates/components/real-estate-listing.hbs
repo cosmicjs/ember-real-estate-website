@@ -1,0 +1,25 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h4>{{listing.title}}</h4>
+  </div>
+  <div class="panel-body">
+    <p>
+      <img src="{{listing.profileImage}}" class="img-thumbnail" style="background-color: #fff "/>
+
+    </p>
+    <p>
+      <strong>Address:</strong> {{listing.address}}
+    </p>
+    <p>
+      <strong>Style:</strong> {{listing.style}}
+    </p>
+    <p>
+      <strong>Location:</strong> {{listing.location}}
+    </p>
+  </div>
+  <div class="panel-footer">
+    <p class="text-right">
+       <h4>{{format-price listing.price}}</h4>
+    </p>
+  </div>
+</div>

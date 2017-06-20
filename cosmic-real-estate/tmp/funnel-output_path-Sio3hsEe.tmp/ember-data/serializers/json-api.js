@@ -1,0 +1,1 @@
+D:/cosmic-real-estate/tmp/funnel-input_base_path-fMOVXeFX.tmp/serializers/json-api.js
