@@ -2,18 +2,34 @@
 
 
 
-define('cosmic-real-estate/adapters/listing', ['exports', 'ember-data', 'cosmic-real-estate/config/environment'], function (exports, _emberData, _environment) {
+define('cosmic-real-estate/adapters/listing', ['exports', 'ember-data', 'cosmic-real-estate/config/environment', 'ember'], function (exports, _emberData, _environment, _ember) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
 
-  console.log(_environment.default);
+
+  var cosmic;
+  if (_environment.default.environment === "development") {
+    cosmic = _ember.default.$.ajax({
+      url: 'localhost:3000/api',
+      success: function success(res) {
+        return res;
+      }
+    });
+    console.log(cosmic);
+  } else {
+    cosmic = {
+      bucketSlug: 'cosmic-real-estate',
+      writeKey: null,
+      readKey: null
+    };
+  }
 
   exports.default = _emberData.default.RESTAdapter.extend({
-    host: 'https://api.cosmicjs.com/v1/' + _environment.default.cosmic.cosmicBucket,
-    urlForFindAll: function urlForFindAll(modelName, snapshot) {
+    host: 'https://api.cosmicjs.com/v1/' + cosmic.bucket,
+    urlForFindAll: function urlForFindAll(modelName) {
       var path = this.pathForType(modelName);
       return this.buildURL() + '/object-type/' + path;
     },
@@ -904,16 +920,7 @@ define('cosmic-real-estate/helpers/format-price', ['exports', 'ember'], function
     value: true
   });
   exports.formatPrice = formatPrice;
-
-  function _toArray(arr) {
-    return Array.isArray(arr) ? arr : Array.from(arr);
-  }
-
-  function formatPrice(_ref) {
-    var _ref2 = _toArray(_ref),
-        value = _ref2[0],
-        rest = _ref2.slice(1);
-
+  function formatPrice(value) {
     return '$' + value.toLocaleString();
   }
 
@@ -1259,7 +1266,7 @@ define('cosmic-real-estate/serializers/listing', ['exports', 'ember-data'], func
             }
             return this._super(store, primaryModelClass, payload, id, requestType);
         },
-        serialize: function serialize(snapshot, options) {
+        serialize: function serialize(snapshot) {
             var json = this._super.apply(this, arguments);
             var payload = {
                 "slug": snapshot.id,
@@ -1426,6 +1433,6 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("cosmic-real-estate/app")["default"].create({"name":"cosmic-real-estate","version":"0.0.0+ac26fcf6"});
+  require("cosmic-real-estate/app")["default"].create({"name":"cosmic-real-estate","version":"0.0.0+7b439766"});
 }
 //# sourceMappingURL=cosmic-real-estate.map

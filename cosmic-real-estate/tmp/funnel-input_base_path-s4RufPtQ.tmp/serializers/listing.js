@@ -36,7 +36,7 @@ export default DS.RESTSerializer.extend({
     }
     return this._super(store, primaryModelClass, payload, id, requestType);
   },
-  serialize(snapshot, options) {
+  serialize(snapshot) {
     var json = this._super(...arguments);
     let payload = {
       "slug": snapshot.id,

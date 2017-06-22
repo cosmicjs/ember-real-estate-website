@@ -7,7 +7,7 @@ define('cosmic-real-estate/tests/app.lint-test', [], function () {
 
   QUnit.test('adapters/listing.js', function (assert) {
     assert.expect(1);
-    assert.ok(false, 'adapters/listing.js should pass ESLint\n\n3:1 - Unexpected console statement. (no-console)\n7:28 - \'snapshot\' is defined but never used. (no-unused-vars)');
+    assert.ok(false, 'adapters/listing.js should pass ESLint\n\n13:3 - Unexpected console statement. (no-console)');
   });
 
   QUnit.test('app.js', function (assert) {
@@ -22,7 +22,7 @@ define('cosmic-real-estate/tests/app.lint-test', [], function () {
 
   QUnit.test('helpers/format-price.js', function (assert) {
     assert.expect(1);
-    assert.ok(false, 'helpers/format-price.js should pass ESLint\n\n3:40 - \'rest\' is defined but never used. (no-unused-vars)');
+    assert.ok(true, 'helpers/format-price.js should pass ESLint\n\n');
   });
 
   QUnit.test('helpers/format-upvotes.js', function (assert) {
@@ -67,7 +67,7 @@ define('cosmic-real-estate/tests/app.lint-test', [], function () {
 
   QUnit.test('serializers/listing.js', function (assert) {
     assert.expect(1);
-    assert.ok(false, 'serializers/listing.js should pass ESLint\n\n39:23 - \'options\' is defined but never used. (no-unused-vars)');
+    assert.ok(true, 'serializers/listing.js should pass ESLint\n\n');
   });
 });
 define('cosmic-real-estate/tests/helpers/destroy-app', ['exports', 'ember'], function (exports, _ember) {

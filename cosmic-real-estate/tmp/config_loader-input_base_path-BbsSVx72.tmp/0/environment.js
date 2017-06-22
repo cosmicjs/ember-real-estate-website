@@ -6,11 +6,7 @@ module.exports = function(environment) {
     environment: environment,
     rootURL: '/',
     locationType: 'auto',
-    cosmic: {
-      cosmicBucket: null,
-      cosmicWriteKey: null,
-      cosmicReadKey: null
-    },
+
     EmberENV: {
       FEATURES: {
         // Here you can enable experimental features on an ember canary build
@@ -29,7 +25,6 @@ module.exports = function(environment) {
   };
 
   if (environment === 'development') {
-    ENV.cosmic.cosmicBucket = 'cosmic-real-estate';
     // ENV.APP.LOG_ACTIVE_GENERATION = true;
     // ENV.APP.LOG_TRANSITIONS = true;
     // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
@@ -48,9 +43,7 @@ module.exports = function(environment) {
   }
 
   if (environment === 'production') {
-    ENV.cosmic.cosmicBucket = 'cosmic-real-estate';
-    ENV.cosmic.cosmicReadKey = process.env.COSMIC_READ_KEY;
-    ENV.cosmic.cosmicWriteKey = process.env.COSMIC_WRITE_KEY;
+
   }
 
   return ENV;

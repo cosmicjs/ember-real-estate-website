@@ -1,6 +1,6 @@
 import Ember from 'ember';
 
-export function formatPrice([value, ...rest]) {
+export function formatPrice(value) {
   return '$' + value.toLocaleString();
 }
 
