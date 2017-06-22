@@ -6,10 +6,10 @@ module.exports = function(environment) {
     environment: environment,
     rootURL: '/',
     locationType: 'auto',
-    cosmic : {
-      cosmicBucket: process.env.COSMIC_BUCKET,
-      cosmicWriteKey: process.env.COSMIC_WRITE_KEY,
-      cosimcReadKey: process.env.COSMIC_READ_KEY
+    cosmic: {
+      cosmicBucket: null,
+      cosmicWriteKey: null,
+      cosmicReadKey: null
     },
     EmberENV: {
       FEATURES: {
@@ -29,8 +29,7 @@ module.exports = function(environment) {
   };
 
   if (environment === 'development') {
-    ENV.cosmic.cosmicBucket = 'cosmic-real-estate'
-    // ENV.APP.LOG_RESOLVER = true;
+    ENV.cosmic.cosmicBucket = 'cosmic-real-estate';
     // ENV.APP.LOG_ACTIVE_GENERATION = true;
     // ENV.APP.LOG_TRANSITIONS = true;
     // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
@@ -49,7 +48,9 @@ module.exports = function(environment) {
   }
 
   if (environment === 'production') {
-
+    ENV.cosmic.cosmicBucket = 'cosmic-real-estate';
+    ENV.cosmic.cosmicReadKey = process.env.COSMIC_READ_KEY;
+    ENV.cosmic.cosmicWriteKey = process.env.COSMIC_WRITE_KEY;
   }
 
   return ENV;

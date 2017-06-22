@@ -1,5 +1,4 @@
 import DS from 'ember-data';
-import ENV from 'cosmic-real-estate/config/environment';
 
 function buildNormalizeListing(source) {
   return {
