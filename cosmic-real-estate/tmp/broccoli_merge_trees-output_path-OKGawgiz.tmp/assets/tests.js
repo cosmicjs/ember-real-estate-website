@@ -7,7 +7,7 @@ define('cosmic-real-estate/tests/app.lint-test', [], function () {
 
   QUnit.test('adapters/listing.js', function (assert) {
     assert.expect(1);
-    assert.ok(false, 'adapters/listing.js should pass ESLint\n\n7:17 - \'Ember\' is not defined. (no-undef)');
+    assert.ok(false, 'adapters/listing.js should pass ESLint\n\n5:28 - \'snapshot\' is defined but never used. (no-unused-vars)');
   });
 
   QUnit.test('app.js', function (assert) {
@@ -48,6 +48,16 @@ define('cosmic-real-estate/tests/app.lint-test', [], function () {
   QUnit.test('routes/listings.js', function (assert) {
     assert.expect(1);
     assert.ok(true, 'routes/listings.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('routes/listings/index.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'routes/listings/index.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('routes/listings/listing.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'routes/listings/listing.js should pass ESLint\n\n');
   });
 
   QUnit.test('serializers/listing.js', function (assert) {
@@ -243,6 +253,16 @@ define('cosmic-real-estate/tests/tests.lint-test', [], function () {
     assert.expect(1);
     assert.ok(true, 'unit/routes/listings-test.js should pass ESLint\n\n');
   });
+
+  QUnit.test('unit/routes/listings/index-test.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/routes/listings/index-test.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('unit/routes/listings/listing-test.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/routes/listings/listing-test.js should pass ESLint\n\n');
+  });
 });
 define('cosmic-real-estate/tests/unit/models/listing-test', ['ember-qunit'], function (_emberQunit) {
   'use strict';
@@ -275,6 +295,32 @@ define('cosmic-real-estate/tests/unit/routes/listings-test', ['ember-qunit'], fu
   'use strict';
 
   (0, _emberQunit.moduleFor)('route:listings', 'Unit | Route | listings', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
+
+  (0, _emberQunit.test)('it exists', function (assert) {
+    var route = this.subject();
+    assert.ok(route);
+  });
+});
+define('cosmic-real-estate/tests/unit/routes/listings/index-test', ['ember-qunit'], function (_emberQunit) {
+  'use strict';
+
+  (0, _emberQunit.moduleFor)('route:listings/index', 'Unit | Route | listings/index', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
+
+  (0, _emberQunit.test)('it exists', function (assert) {
+    var route = this.subject();
+    assert.ok(route);
+  });
+});
+define('cosmic-real-estate/tests/unit/routes/listings/listing-test', ['ember-qunit'], function (_emberQunit) {
+  'use strict';
+
+  (0, _emberQunit.moduleFor)('route:listings/listing', 'Unit | Route | listings/listing', {
     // Specify the other units that are required for this test.
     // needs: ['controller:foo']
   });

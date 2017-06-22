@@ -5,7 +5,7 @@ define('cosmic-real-estate/tests/app.lint-test', [], function () {
 
   QUnit.test('adapters/listing.js', function (assert) {
     assert.expect(1);
-    assert.ok(false, 'adapters/listing.js should pass ESLint\n\n7:17 - \'Ember\' is not defined. (no-undef)');
+    assert.ok(false, 'adapters/listing.js should pass ESLint\n\n5:28 - \'snapshot\' is defined but never used. (no-unused-vars)');
   });
 
   QUnit.test('app.js', function (assert) {
@@ -46,6 +46,16 @@ define('cosmic-real-estate/tests/app.lint-test', [], function () {
   QUnit.test('routes/listings.js', function (assert) {
     assert.expect(1);
     assert.ok(true, 'routes/listings.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('routes/listings/index.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'routes/listings/index.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('routes/listings/listing.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'routes/listings/listing.js should pass ESLint\n\n');
   });
 
   QUnit.test('serializers/listing.js', function (assert) {

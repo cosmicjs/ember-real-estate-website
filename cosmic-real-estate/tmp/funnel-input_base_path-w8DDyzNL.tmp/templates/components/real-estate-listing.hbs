@@ -1,10 +1,15 @@
 <div class="panel panel-default">
   <div class="panel-heading">
-    <h4>{{listing.title}}</h4>
+    <h4>
+      {{#link-to 'listings.listing' listing}}{{listing.title}}{{/link-to}}
+      <span class="pull-right">
+        {{{format-upvotes upvotes}}}
+      </span>
+    </h4>
   </div>
   <div class="panel-body">
     <p>
-      <img src="{{listing.profileImage}}" class="img-thumbnail" style="background-color: #fff "/>
+      <img src="{{listing.profileImage}}" class="img-thumbnail" style="background-color: #fff;height:auto"/>
 
     </p>
     <p>
@@ -14,10 +19,14 @@
       <strong>Style:</strong> {{listing.style}}
     </p>
     <p>
-      <strong>Location:</strong> {{listing.location}}
+      <strong>Neighborhood:</strong> {{listing.neighborhood}}
     </p>
   </div>
   <div class="panel-footer">
+    <p class="pull-left">
+      <button {{action "vote" "down"}} class="btn btn-default"><span class="glyphicon glyphicon-thumbs-down"></span></button>
+      <button {{action "vote" "up"}} class="btn btn-default"><span class="glyphicon glyphicon-thumbs-up"></span></button>
+    </p>
     <p class="text-right">
        <h4>{{format-price listing.price}}</h4>
     </p>

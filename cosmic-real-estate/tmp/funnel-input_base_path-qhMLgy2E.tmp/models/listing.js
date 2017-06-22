@@ -6,5 +6,10 @@ export default DS.Model.extend({
   address: DS.attr(),
   profileImage: DS.attr(),
   style: DS.attr(),
-  location: DS.attr(),
+  neighborhood: DS.attr(),
+  beds: DS.attr(),
+  baths: DS.attr(),
+  squareFeet: DS.attr(),
+  zipCode: DS.attr(),
+  content: DS.attr()
 });

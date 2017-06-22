@@ -7,7 +7,7 @@ define('cosmic-real-estate/tests/app.lint-test', [], function () {
 
   QUnit.test('adapters/listing.js', function (assert) {
     assert.expect(1);
-    assert.ok(false, 'adapters/listing.js should pass ESLint\n\n7:17 - \'Ember\' is not defined. (no-undef)');
+    assert.ok(false, 'adapters/listing.js should pass ESLint\n\n5:28 - \'snapshot\' is defined but never used. (no-unused-vars)');
   });
 
   QUnit.test('app.js', function (assert) {
@@ -23,6 +23,11 @@ define('cosmic-real-estate/tests/app.lint-test', [], function () {
   QUnit.test('helpers/format-price.js', function (assert) {
     assert.expect(1);
     assert.ok(false, 'helpers/format-price.js should pass ESLint\n\n3:40 - \'rest\' is defined but never used. (no-unused-vars)');
+  });
+
+  QUnit.test('helpers/format-upvotes.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'helpers/format-upvotes.js should pass ESLint\n\n');
   });
 
   QUnit.test('models/listing.js', function (assert) {
@@ -50,9 +55,19 @@ define('cosmic-real-estate/tests/app.lint-test', [], function () {
     assert.ok(true, 'routes/listings.js should pass ESLint\n\n');
   });
 
+  QUnit.test('routes/listings/index.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'routes/listings/index.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('routes/listings/listing.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'routes/listings/listing.js should pass ESLint\n\n');
+  });
+
   QUnit.test('serializers/listing.js', function (assert) {
     assert.expect(1);
-    assert.ok(true, 'serializers/listing.js should pass ESLint\n\n');
+    assert.ok(false, 'serializers/listing.js should pass ESLint\n\n39:23 - \'options\' is defined but never used. (no-unused-vars)');
   });
 });
 define('cosmic-real-estate/tests/helpers/destroy-app', ['exports', 'ember'], function (exports, _ember) {
@@ -183,6 +198,26 @@ define('cosmic-real-estate/tests/integration/helpers/format-price-test', ['ember
     assert.equal(this.$().text().trim(), '1234');
   });
 });
+define('cosmic-real-estate/tests/integration/helpers/format-upvotes-test', ['ember-qunit'], function (_emberQunit) {
+  'use strict';
+
+  (0, _emberQunit.moduleForComponent)('format-upvotes', 'helper:format-upvotes', {
+    integration: true
+  });
+
+  // Replace this with your real tests.
+  (0, _emberQunit.test)('it renders', function (assert) {
+    this.set('inputValue', '1234');
+
+    this.render(Ember.HTMLBars.template({
+      "id": "g+XRLILv",
+      "block": "{\"statements\":[[1,[33,[\"format-upvotes\"],[[28,[\"inputValue\"]]],null],false]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}",
+      "meta": {}
+    }));
+
+    assert.equal(this.$().text().trim(), '1234');
+  });
+});
 define('cosmic-real-estate/tests/test-helper', ['cosmic-real-estate/tests/helpers/resolver', 'ember-qunit', 'ember-cli-qunit'], function (_resolver, _emberQunit, _emberCliQunit) {
   'use strict';
 
@@ -224,6 +259,11 @@ define('cosmic-real-estate/tests/tests.lint-test', [], function () {
     assert.ok(true, 'integration/helpers/format-price-test.js should pass ESLint\n\n');
   });
 
+  QUnit.test('integration/helpers/format-upvotes-test.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'integration/helpers/format-upvotes-test.js should pass ESLint\n\n');
+  });
+
   QUnit.test('test-helper.js', function (assert) {
     assert.expect(1);
     assert.ok(true, 'test-helper.js should pass ESLint\n\n');
@@ -242,6 +282,16 @@ define('cosmic-real-estate/tests/tests.lint-test', [], function () {
   QUnit.test('unit/routes/listings-test.js', function (assert) {
     assert.expect(1);
     assert.ok(true, 'unit/routes/listings-test.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('unit/routes/listings/index-test.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/routes/listings/index-test.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('unit/routes/listings/listing-test.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/routes/listings/listing-test.js should pass ESLint\n\n');
   });
 });
 define('cosmic-real-estate/tests/unit/models/listing-test', ['ember-qunit'], function (_emberQunit) {
@@ -275,6 +325,32 @@ define('cosmic-real-estate/tests/unit/routes/listings-test', ['ember-qunit'], fu
   'use strict';
 
   (0, _emberQunit.moduleFor)('route:listings', 'Unit | Route | listings', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
+
+  (0, _emberQunit.test)('it exists', function (assert) {
+    var route = this.subject();
+    assert.ok(route);
+  });
+});
+define('cosmic-real-estate/tests/unit/routes/listings/index-test', ['ember-qunit'], function (_emberQunit) {
+  'use strict';
+
+  (0, _emberQunit.moduleFor)('route:listings/index', 'Unit | Route | listings/index', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
+
+  (0, _emberQunit.test)('it exists', function (assert) {
+    var route = this.subject();
+    assert.ok(route);
+  });
+});
+define('cosmic-real-estate/tests/unit/routes/listings/listing-test', ['ember-qunit'], function (_emberQunit) {
+  'use strict';
+
+  (0, _emberQunit.moduleFor)('route:listings/listing', 'Unit | Route | listings/listing', {
     // Specify the other units that are required for this test.
     // needs: ['controller:foo']
   });

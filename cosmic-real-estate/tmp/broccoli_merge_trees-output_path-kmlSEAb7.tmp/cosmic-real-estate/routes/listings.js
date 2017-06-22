@@ -4,9 +4,5 @@ define('cosmic-real-estate/routes/listings', ['exports', 'ember'], function (exp
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = _ember.default.Route.extend({
-    model: function model() {
-      return this.get('store').findAll('listing');
-    }
-  });
+  exports.default = _ember.default.Route.extend({});
 });

@@ -12,7 +12,9 @@ define('cosmic-real-estate/router', ['exports', 'ember', 'cosmic-real-estate/con
   });
 
   Router.map(function () {
-    this.route('listings');
+    this.route('listings', function () {
+      this.route('listing', { path: ':listing_slug' });
+    });
   });
 
   exports.default = Router;

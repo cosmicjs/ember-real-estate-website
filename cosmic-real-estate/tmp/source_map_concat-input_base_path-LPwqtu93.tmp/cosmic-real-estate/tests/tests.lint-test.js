@@ -52,4 +52,14 @@ define('cosmic-real-estate/tests/tests.lint-test', [], function () {
     assert.expect(1);
     assert.ok(true, 'unit/routes/listings-test.js should pass ESLint\n\n');
   });
+
+  QUnit.test('unit/routes/listings/index-test.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/routes/listings/index-test.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('unit/routes/listings/listing-test.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/routes/listings/listing-test.js should pass ESLint\n\n');
+  });
 });

@@ -10,10 +10,27 @@ define('cosmic-real-estate/adapters/listing', ['exports', 'ember-data'], functio
   });
   exports.default = _emberData.default.RESTAdapter.extend({
     host: 'https://api.cosmicjs.com/v1/cosmic-real-estate',
-    namespace: 'object-type',
-    pathForType: function pathForType(modelName) {
-      modelName = Ember.String.pluralize(modelName);
-      return modelName.concat("?hide_metafields=true");
+    urlForFindAll: function urlForFindAll(modelName, snapshot) {
+      var path = this.pathForType(modelName);
+      return this.buildURL() + '/object-type/' + path;
+    },
+    urlForFindRecord: function urlForFindRecord(slug) {
+      return this.buildURL() + '/object/' + slug;
+    },
+    urlForUpdateRecord: function urlForUpdateRecord() {
+      return this.buildURL() + '/edit-object';
+    },
+
+    updateRecord: function updateRecord(store, type, snapshot) {
+      var data = {};
+      var serializer = store.serializerFor(type.modelName);
+
+      serializer.serializeIntoHash(data, type, snapshot);
+      data = data.listing;
+      var id = snapshot.id;
+      var url = this.buildURL(type.modelName, id, snapshot, 'updateRecord');
+
+      return this.ajax(url, "PUT", { data: data });
     }
   });
 });
@@ -773,7 +790,34 @@ define('cosmic-real-estate/components/real-estate-listing', ['exports', 'ember']
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = _ember.default.Component.extend({});
+
+
+  function updateVote(upvotes, listing_slug, store) {
+    store.findRecord('listing', listing_slug).then(function (listing) {
+      listing.set('upvotes', upvotes);
+      listing.save();
+    });
+  }
+
+  exports.default = _ember.default.Component.extend({
+    store: _ember.default.inject.service(),
+    upvotes: _ember.default.computed('upvotes', function () {
+      return this.get('listing.upvotes');
+    }),
+    slug: _ember.default.computed('slug', function () {
+      return this.get('listing.id');
+    }),
+    actions: {
+      vote: function vote(direction) {
+        var upvotes = this.get('upvotes');
+        direction === 'up' ? upvotes++ : upvotes--;
+        this.set('upvotes', upvotes);
+        var slug = this.get('slug');
+        var store = this.get('store');
+        updateVote(upvotes, slug, store);
+      }
+    }
+  });
 });
 define('cosmic-real-estate/components/welcome-page', ['exports', 'ember-welcome-page/components/welcome-page'], function (exports, _welcomePage) {
   'use strict';
@@ -871,6 +915,25 @@ define('cosmic-real-estate/helpers/format-price', ['exports', 'ember'], function
   }
 
   exports.default = _ember.default.Helper.helper(formatPrice);
+});
+define('cosmic-real-estate/helpers/format-upvotes', ['exports', 'ember'], function (exports, _ember) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.formatUpvotes = formatUpvotes;
+  function formatUpvotes(upvote) {
+    if (upvote > 0) {
+      return '<span class="text-success">' + upvote + '</span>';
+    } else if (upvote < 0) {
+      return '<span class="text-danger">' + upvote + '</span>';
+    } else {
+      return '<span class="text-muted">' + upvote + '</span>';
+    }
+  }
+
+  exports.default = _ember.default.Helper.helper(formatUpvotes);
 });
 define('cosmic-real-estate/helpers/pluralize', ['exports', 'ember-inflector/lib/helpers/pluralize'], function (exports, _pluralize) {
   'use strict';
@@ -1067,7 +1130,13 @@ define('cosmic-real-estate/models/listing', ['exports', 'ember-data'], function 
     address: _emberData.default.attr(),
     profileImage: _emberData.default.attr(),
     style: _emberData.default.attr(),
-    location: _emberData.default.attr()
+    neighborhood: _emberData.default.attr(),
+    beds: _emberData.default.attr(),
+    baths: _emberData.default.attr(),
+    squareFeet: _emberData.default.attr(),
+    zipCode: _emberData.default.attr(),
+    content: _emberData.default.attr(),
+    upvotes: _emberData.default.attr()
   });
 });
 define('cosmic-real-estate/resolver', ['exports', 'ember-resolver'], function (exports, _emberResolver) {
@@ -1092,7 +1161,9 @@ define('cosmic-real-estate/router', ['exports', 'ember', 'cosmic-real-estate/con
   });
 
   Router.map(function () {
-    this.route('listings');
+    this.route('listings', function () {
+      this.route('listing', { path: ':listing_id' });
+    });
   });
 
   exports.default = Router;
@@ -1115,38 +1186,159 @@ define('cosmic-real-estate/routes/listings', ['exports', 'ember'], function (exp
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
+  exports.default = _ember.default.Route.extend({});
+});
+define('cosmic-real-estate/routes/listings/index', ['exports', 'ember'], function (exports, _ember) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
   exports.default = _ember.default.Route.extend({
     model: function model() {
       return this.get('store').findAll('listing');
     }
   });
 });
-define('cosmic-real-estate/serializers/listing', ['exports', 'ember-data'], function (exports, _emberData) {
+define('cosmic-real-estate/routes/listings/listing', ['exports', 'ember'], function (exports, _ember) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = _emberData.default.RESTSerializer.extend({
-    normalizeResponse: function normalizeResponse(store, primaryModelClass, payload, id, requestType) {
-      var normalizedListings = payload.objects.map(function (listing) {
-        var obj = {
-          id: listing._id,
-          title: listing.title,
-          price: listing.metadata.price,
-          address: listing.metadata.address,
-          profileImage: listing.metadata.profile.url,
-          style: listing.metadata.style,
-          location: listing.metadata.location
-        };
-        return obj;
-      });
-      payload = {
-        listings: normalizedListings
-      };
-      return this._super(store, primaryModelClass, payload, id, requestType);
+  exports.default = _ember.default.Route.extend({
+    model: function model(params) {
+      return this.get('store').findRecord('listing', params.listing_id);
     }
   });
+});
+define('cosmic-real-estate/serializers/listing', ['exports', 'ember-data'], function (exports, _emberData) {
+    'use strict';
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+
+
+    function buildNormalizeListing(source) {
+        return {
+            id: source._id,
+            slug: source.slug,
+            content: source.content,
+            title: source.title,
+            price: source.metadata.price,
+            address: source.metadata.address,
+            profileImage: source.metadata.profile.url,
+            style: source.metadata.style,
+            neighborhood: source.metadata.neighborhood,
+            beds: source.metadata.beds,
+            baths: source.metadata.baths,
+            squareFeet: source.metadata.square_feet,
+            zipCode: source.metadata.zip_code,
+            upvotes: source.metadata.upvotes
+        };
+    }
+    exports.default = _emberData.default.RESTSerializer.extend({
+        primaryKey: 'slug',
+        normalizeResponse: function normalizeResponse(store, primaryModelClass, payload, id, requestType) {
+            if (payload.objects) {
+                var normalizedListings = payload.objects.map(function (listing) {
+                    return buildNormalizeListing(listing);
+                });
+                payload = {
+                    listings: normalizedListings
+                };
+            } else {
+                var normalizedListing = buildNormalizeListing(payload.object);
+                payload = {
+                    listing: normalizedListing
+                };
+            }
+            return this._super(store, primaryModelClass, payload, id, requestType);
+        },
+        serialize: function serialize(snapshot, options) {
+            var json = this._super.apply(this, arguments);
+            var payload = {
+                "slug": snapshot.id,
+                "metafields": [{
+                    "required": true,
+                    "value": json.price,
+                    "key": "price",
+                    "title": "Price",
+                    "type": "text",
+                    "children": null
+                }, {
+                    "required": true,
+                    "value": json.address,
+                    "key": "address",
+                    "title": "Address",
+                    "type": "text",
+                    "children": null
+                }, {
+                    "value": json.profileImage.split('/').slice(-1)[0],
+                    "key": "profile",
+                    "title": "Profile",
+                    "type": "file",
+                    "children": null,
+                    "url": json.profileImage,
+                    "imgix_url": "https://cosmicjs.imgix.net/" + json.profileImage.split('/').slice(-1)[0]
+                }, {
+                    "required": true,
+                    "options": [{
+                        "value": "House"
+                    }, {
+                        "value": "Apartment"
+                    }, {
+                        "value": "Condo"
+                    }],
+                    "value": json.style,
+                    "key": "style",
+                    "title": "Style",
+                    "type": "radio-buttons",
+                    "children": null
+                }, {
+                    "value": json.beds,
+                    "key": "beds",
+                    "title": "Beds",
+                    "type": "text",
+                    "children": null
+                }, {
+                    "value": json.baths,
+                    "key": "baths",
+                    "title": "Baths",
+                    "type": "text",
+                    "children": null
+                }, {
+                    "value": json.squareFeet,
+                    "key": "square_feet",
+                    "title": "Square Feet",
+                    "type": "text",
+                    "children": null
+                }, {
+                    "required": true,
+                    "value": json.neighborhood,
+                    "key": "neighborhood",
+                    "title": "Neighborhood",
+                    "type": "text",
+                    "children": null
+                }, {
+                    "required": true,
+                    "value": json.zipcode,
+                    "key": "zipcode",
+                    "title": "zipcode",
+                    "type": "text",
+                    "children": null
+                }, {
+                    "value": json.upvotes,
+                    "key": "upvotes",
+                    "title": "Upvotes",
+                    "type": "text",
+                    "children": null
+                }]
+            };
+            return payload;
+        }
+    });
 });
 define('cosmic-real-estate/services/ajax', ['exports', 'ember-ajax/services/ajax'], function (exports, _ajax) {
   'use strict';
@@ -1175,7 +1367,7 @@ define("cosmic-real-estate/templates/components/real-estate-listing", ["exports"
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = Ember.HTMLBars.template({ "id": "/cPglKMV", "block": "{\"statements\":[[11,\"div\",[]],[15,\"class\",\"panel panel-default\"],[13],[0,\"\\n  \"],[11,\"div\",[]],[15,\"class\",\"panel-heading\"],[13],[0,\"\\n    \"],[11,\"h4\",[]],[13],[1,[28,[\"listing\",\"title\"]],false],[14],[0,\"\\n  \"],[14],[0,\"\\n  \"],[11,\"div\",[]],[15,\"class\",\"panel-body\"],[13],[0,\"\\n    \"],[11,\"p\",[]],[13],[0,\"\\n      \"],[11,\"img\",[]],[16,\"src\",[34,[[28,[\"listing\",\"profileImage\"]]]]],[15,\"class\",\"img-thumbnail\"],[15,\"style\",\"background-color: #fff \"],[13],[14],[0,\"\\n\\n    \"],[14],[0,\"\\n    \"],[11,\"p\",[]],[13],[0,\"\\n      \"],[11,\"strong\",[]],[13],[0,\"Address:\"],[14],[0,\" \"],[1,[28,[\"listing\",\"address\"]],false],[0,\"\\n    \"],[14],[0,\"\\n    \"],[11,\"p\",[]],[13],[0,\"\\n      \"],[11,\"strong\",[]],[13],[0,\"Style:\"],[14],[0,\" \"],[1,[28,[\"listing\",\"style\"]],false],[0,\"\\n    \"],[14],[0,\"\\n    \"],[11,\"p\",[]],[13],[0,\"\\n      \"],[11,\"strong\",[]],[13],[0,\"Location:\"],[14],[0,\" \"],[1,[28,[\"listing\",\"location\"]],false],[0,\"\\n    \"],[14],[0,\"\\n  \"],[14],[0,\"\\n  \"],[11,\"div\",[]],[15,\"class\",\"panel-footer\"],[13],[0,\"\\n    \"],[11,\"p\",[]],[15,\"class\",\"text-right\"],[13],[0,\"\\n       \"],[11,\"h4\",[]],[13],[1,[33,[\"format-price\"],[[28,[\"listing\",\"price\"]]],null],false],[14],[0,\"\\n    \"],[14],[0,\"\\n  \"],[14],[0,\"\\n\"],[14],[0,\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "cosmic-real-estate/templates/components/real-estate-listing.hbs" } });
+  exports.default = Ember.HTMLBars.template({ "id": "rLqdXmvC", "block": "{\"statements\":[[11,\"div\",[]],[15,\"class\",\"panel panel-default\"],[13],[0,\"\\n  \"],[11,\"div\",[]],[15,\"class\",\"panel-heading\"],[13],[0,\"\\n    \"],[11,\"h4\",[]],[13],[0,\"\\n      \"],[6,[\"link-to\"],[\"listings.listing\",[28,[\"listing\"]]],null,{\"statements\":[[1,[28,[\"listing\",\"title\"]],false]],\"locals\":[]},null],[0,\"\\n      \"],[11,\"span\",[]],[15,\"class\",\"pull-right\"],[13],[0,\"\\n        \"],[1,[33,[\"format-upvotes\"],[[28,[\"upvotes\"]]],null],true],[0,\"\\n      \"],[14],[0,\"\\n    \"],[14],[0,\"\\n  \"],[14],[0,\"\\n  \"],[11,\"div\",[]],[15,\"class\",\"panel-body\"],[13],[0,\"\\n    \"],[11,\"p\",[]],[13],[0,\"\\n      \"],[11,\"img\",[]],[16,\"src\",[34,[[28,[\"listing\",\"profileImage\"]]]]],[15,\"class\",\"img-thumbnail\"],[15,\"style\",\"background-color: #fff;height:auto\"],[13],[14],[0,\"\\n\\n    \"],[14],[0,\"\\n    \"],[11,\"p\",[]],[13],[0,\"\\n      \"],[11,\"strong\",[]],[13],[0,\"Address:\"],[14],[0,\" \"],[1,[28,[\"listing\",\"address\"]],false],[0,\"\\n    \"],[14],[0,\"\\n    \"],[11,\"p\",[]],[13],[0,\"\\n      \"],[11,\"strong\",[]],[13],[0,\"Style:\"],[14],[0,\" \"],[1,[28,[\"listing\",\"style\"]],false],[0,\"\\n    \"],[14],[0,\"\\n    \"],[11,\"p\",[]],[13],[0,\"\\n      \"],[11,\"strong\",[]],[13],[0,\"Neighborhood:\"],[14],[0,\" \"],[1,[28,[\"listing\",\"neighborhood\"]],false],[0,\"\\n    \"],[14],[0,\"\\n  \"],[14],[0,\"\\n  \"],[11,\"div\",[]],[15,\"class\",\"panel-footer\"],[13],[0,\"\\n    \"],[11,\"p\",[]],[15,\"class\",\"pull-left\"],[13],[0,\"\\n      \"],[11,\"button\",[]],[15,\"class\",\"btn btn-default\"],[5,[\"action\"],[[28,[null]],\"vote\",\"down\"]],[13],[11,\"span\",[]],[15,\"class\",\"glyphicon glyphicon-thumbs-down\"],[13],[14],[14],[0,\"\\n      \"],[11,\"button\",[]],[15,\"class\",\"btn btn-default\"],[5,[\"action\"],[[28,[null]],\"vote\",\"up\"]],[13],[11,\"span\",[]],[15,\"class\",\"glyphicon glyphicon-thumbs-up\"],[13],[14],[14],[0,\"\\n    \"],[14],[0,\"\\n    \"],[11,\"p\",[]],[15,\"class\",\"text-right\"],[13],[0,\"\\n       \"],[11,\"h4\",[]],[13],[1,[33,[\"format-price\"],[[28,[\"listing\",\"price\"]]],null],false],[14],[0,\"\\n    \"],[14],[0,\"\\n  \"],[14],[0,\"\\n\"],[14],[0,\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "cosmic-real-estate/templates/components/real-estate-listing.hbs" } });
 });
 define("cosmic-real-estate/templates/index", ["exports"], function (exports) {
   "use strict";
@@ -1191,7 +1383,23 @@ define("cosmic-real-estate/templates/listings", ["exports"], function (exports) 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = Ember.HTMLBars.template({ "id": "mZwoCRJ9", "block": "{\"statements\":[[11,\"div\",[]],[15,\"class\",\"container\"],[13],[0,\"\\n  \"],[11,\"div\",[]],[15,\"class\",\"row\"],[13],[0,\"\\n    \"],[11,\"div\",[]],[15,\"class\",\"col-md-12\"],[13],[0,\"\\n      \"],[11,\"div\",[]],[15,\"class\",\"jumbotron\"],[15,\"style\",\"margin-top: 20px\"],[13],[0,\"\\n        \"],[11,\"h1\",[]],[13],[0,\"Welcome to Cosmic Real Estate!\"],[14],[0,\"\\n        \"],[11,\"p\",[]],[13],[0,\"\\n          Check out our awesome real estate listings -\\n          stored and managed with Cosmic JS and\\n          rendered right in your browser.\\n        \"],[14],[0,\"\\n      \"],[14],[0,\"\\n    \"],[14],[0,\"\\n  \"],[14],[0,\"\\n\"],[14],[0,\"\\n\\n\"],[11,\"div\",[]],[15,\"class\",\"container-fluid\"],[13],[0,\"\\n  \"],[11,\"div\",[]],[15,\"class\",\"row\"],[13],[0,\"\\n\"],[6,[\"each\"],[[28,[\"model\"]]],null,{\"statements\":[[0,\"      \"],[11,\"div\",[]],[15,\"class\",\"col-sm-4\"],[13],[0,\"\\n         \"],[1,[33,[\"real-estate-listing\"],null,[[\"listing\"],[[28,[\"currentListing\"]]]]],false],[0,\"\\n      \"],[14],[0,\"\\n\"]],\"locals\":[\"currentListing\"]},null],[0,\"  \"],[14],[0,\"\\n\"],[14],[0,\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "cosmic-real-estate/templates/listings.hbs" } });
+  exports.default = Ember.HTMLBars.template({ "id": "9oev0S5H", "block": "{\"statements\":[[11,\"div\",[]],[15,\"class\",\"container\"],[13],[0,\"\\n  \"],[11,\"div\",[]],[15,\"class\",\"row\"],[13],[0,\"\\n    \"],[11,\"div\",[]],[15,\"class\",\"col-md-12\"],[13],[0,\"\\n      \"],[11,\"div\",[]],[15,\"class\",\"jumbotron\"],[15,\"style\",\"margin-top: 20px\"],[13],[0,\"\\n        \"],[11,\"h1\",[]],[13],[0,\"Welcome to Cosmic Real Estate!\"],[14],[0,\"\\n        \"],[11,\"p\",[]],[13],[0,\"\\n          Check out our awesome real estate listings -\\n          stored and managed with Cosmic JS and\\n          rendered right in your browser.\\n        \"],[14],[0,\"\\n      \"],[14],[0,\"\\n    \"],[14],[0,\"\\n  \"],[14],[0,\"\\n\"],[14],[0,\"\\n\\n\"],[11,\"div\",[]],[15,\"class\",\"container\"],[13],[0,\"\\n  \"],[1,[26,[\"outlet\"]],false],[0,\"\\n\"],[14],[0,\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "cosmic-real-estate/templates/listings.hbs" } });
+});
+define("cosmic-real-estate/templates/listings/index", ["exports"], function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.HTMLBars.template({ "id": "sm92UWG0", "block": "{\"statements\":[[11,\"div\",[]],[15,\"class\",\"row\"],[13],[0,\"\\n\"],[6,[\"each\"],[[28,[\"model\"]]],null,{\"statements\":[[0,\"    \"],[11,\"div\",[]],[15,\"class\",\"col-sm-4\"],[13],[0,\"\\n       \"],[1,[33,[\"real-estate-listing\"],null,[[\"listing\"],[[28,[\"currentListing\"]]]]],false],[0,\"\\n    \"],[14],[0,\"\\n\"]],\"locals\":[\"currentListing\"]},null],[14],[0,\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "cosmic-real-estate/templates/listings/index.hbs" } });
+});
+define("cosmic-real-estate/templates/listings/listing", ["exports"], function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.HTMLBars.template({ "id": "5evKHIXw", "block": "{\"statements\":[[11,\"div\",[]],[15,\"class\",\"row\"],[13],[0,\"\\n  \"],[11,\"div\",[]],[15,\"class\",\"col-sm-12\"],[13],[0,\"\\n    \"],[11,\"ul\",[]],[15,\"class\",\"nav nav-pills\"],[13],[0,\"\\n      \"],[11,\"li\",[]],[15,\"role\",\"presentation\"],[13],[11,\"a\",[]],[15,\"href\",\"#description\"],[13],[0,\"Description\"],[14],[14],[0,\"\\n      \"],[11,\"li\",[]],[15,\"role\",\"presentation\"],[13],[11,\"a\",[]],[15,\"href\",\"#stats\"],[13],[0,\"Stats\"],[14],[14],[0,\"\\n      \"],[11,\"li\",[]],[15,\"role\",\"presentation\"],[13],[6,[\"link-to\"],[\"listings\"],null,{\"statements\":[[0,\"Return to Listings\"]],\"locals\":[]},null],[14],[0,\"\\n    \"],[14],[0,\"\\n  \"],[14],[0,\"\\n  \"],[11,\"div\",[]],[15,\"class\",\"col-sm-9\"],[13],[0,\"\\n    \"],[11,\"div\",[]],[15,\"class\",\"page-header\"],[13],[0,\"\\n      \"],[11,\"h1\",[]],[13],[0,\"\\n        \"],[1,[28,[\"model\",\"title\"]],false],[0,\" \"],[11,\"small\",[]],[13],[0,\"Upvotes: \"],[1,[33,[\"format-upvotes\"],[[28,[\"model\",\"upvotes\"]]],null],true],[14],[0,\"\\n      \"],[14],[0,\"\\n    \"],[14],[0,\"\\n  \"],[14],[0,\"\\n  \"],[11,\"div\",[]],[15,\"class\",\"col-sm-3\"],[13],[0,\"\\n      \"],[11,\"h1\",[]],[13],[0,\"\\n        \"],[11,\"span\",[]],[15,\"class\",\"text-success\"],[13],[1,[33,[\"format-price\"],[[28,[\"model\",\"price\"]]],null],false],[14],[0,\"\\n      \"],[14],[0,\"\\n\\n  \"],[14],[0,\"\\n\"],[14],[0,\"\\n\"],[11,\"div\",[]],[15,\"class\",\"row\"],[13],[0,\"\\n  \"],[11,\"div\",[]],[15,\"class\",\"col-md-6\"],[13],[0,\"\\n    \"],[11,\"img\",[]],[16,\"src\",[28,[\"model\",\"profileImage\"]],null],[15,\"class\",\"img-responsive\"],[13],[14],[0,\"\\n  \"],[14],[0,\"\\n  \"],[11,\"div\",[]],[15,\"class\",\"col-md-6\"],[13],[0,\"\\n      \"],[11,\"h3\",[]],[15,\"id\",\"stats\"],[13],[0,\"Stats:\"],[14],[0,\"\\n      \"],[11,\"ul\",[]],[15,\"class\",\"list-group\"],[13],[0,\"\\n      \"],[11,\"li\",[]],[15,\"class\",\"list-group-item\"],[13],[11,\"strong\",[]],[13],[0,\"Address:\"],[14],[11,\"span\",[]],[15,\"class\",\"pull-right\"],[13],[1,[28,[\"model\",\"address\"]],false],[14],[14],[0,\"\\n      \"],[11,\"li\",[]],[15,\"class\",\"list-group-item\"],[13],[11,\"strong\",[]],[13],[0,\"Style:\"],[14],[11,\"span\",[]],[15,\"class\",\"pull-right\"],[13],[1,[28,[\"model\",\"style\"]],false],[14],[14],[0,\"\\n      \"],[11,\"li\",[]],[15,\"class\",\"list-group-item\"],[13],[11,\"strong\",[]],[13],[0,\"Neighborhood:\"],[14],[11,\"span\",[]],[15,\"class\",\"pull-right\"],[13],[1,[28,[\"model\",\"neighborhood\"]],false],[14],[14],[0,\"\\n      \"],[11,\"li\",[]],[15,\"class\",\"list-group-item\"],[13],[11,\"strong\",[]],[13],[0,\"Beds:\"],[14],[11,\"span\",[]],[15,\"class\",\"pull-right\"],[13],[1,[28,[\"model\",\"beds\"]],false],[14],[14],[0,\"\\n      \"],[11,\"li\",[]],[15,\"class\",\"list-group-item\"],[13],[11,\"strong\",[]],[13],[0,\"Baths:\"],[14],[11,\"span\",[]],[15,\"class\",\"pull-right\"],[13],[1,[28,[\"model\",\"baths\"]],false],[14],[14],[0,\"\\n      \"],[11,\"li\",[]],[15,\"class\",\"list-group-item\"],[13],[11,\"strong\",[]],[13],[0,\"Square Feet:\"],[14],[11,\"span\",[]],[15,\"class\",\"pull-right\"],[13],[1,[28,[\"model\",\"squareFeet\"]],false],[14],[14],[0,\"\\n      \"],[14],[0,\"\\n  \"],[14],[0,\"\\n\\n\\n  \"],[11,\"div\",[]],[15,\"class\",\"col-sm-12\"],[13],[0,\"\\n    \"],[11,\"h3\",[]],[15,\"id\",\"description\"],[13],[0,\"Description\"],[14],[0,\"\\n    \"],[11,\"span\",[]],[15,\"class\",\"text-muted\"],[13],[1,[28,[\"model\",\"content\"]],true],[14],[0,\"\\n  \"],[14],[0,\"\\n\"],[14],[0,\"\\n\"]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "cosmic-real-estate/templates/listings/listing.hbs" } });
 });
 
 
@@ -1215,6 +1423,6 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("cosmic-real-estate/app")["default"].create({"name":"cosmic-real-estate","version":"0.0.0+1a401488"});
+  require("cosmic-real-estate/app")["default"].create({"name":"cosmic-real-estate","version":"0.0.0+87e3984a"});
 }
 //# sourceMappingURL=cosmic-real-estate.map
