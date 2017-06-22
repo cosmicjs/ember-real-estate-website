@@ -1,4 +1,5 @@
 import DS from 'ember-data';
+import ENV from 'cosmic-real-estate/config/environment';
 
 function buildNormalizeListing(source) {
   return {
@@ -116,7 +117,7 @@ export default DS.RESTSerializer.extend({
         },
         {
             "required": true,
-            "value": json.zipcode,
+            "value": json.zipCode,
             "key": "zipcode",
             "title": "zipcode",
             "type": "text",

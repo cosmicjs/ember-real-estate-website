@@ -7,7 +7,7 @@ define('cosmic-real-estate/tests/app.lint-test', [], function () {
 
   QUnit.test('adapters/listing.js', function (assert) {
     assert.expect(1);
-    assert.ok(false, 'adapters/listing.js should pass ESLint\n\n5:28 - \'snapshot\' is defined but never used. (no-unused-vars)');
+    assert.ok(false, 'adapters/listing.js should pass ESLint\n\n6:28 - \'snapshot\' is defined but never used. (no-unused-vars)');
   });
 
   QUnit.test('app.js', function (assert) {
@@ -67,7 +67,7 @@ define('cosmic-real-estate/tests/app.lint-test', [], function () {
 
   QUnit.test('serializers/listing.js', function (assert) {
     assert.expect(1);
-    assert.ok(false, 'serializers/listing.js should pass ESLint\n\n39:23 - \'options\' is defined but never used. (no-unused-vars)');
+    assert.ok(false, 'serializers/listing.js should pass ESLint\n\n2:8 - \'ENV\' is defined but never used. (no-unused-vars)\n40:23 - \'options\' is defined but never used. (no-unused-vars)');
   });
 });
 define('cosmic-real-estate/tests/helpers/destroy-app', ['exports', 'ember'], function (exports, _ember) {

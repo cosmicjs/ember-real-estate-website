@@ -2,14 +2,14 @@
 
 
 
-define('cosmic-real-estate/adapters/listing', ['exports', 'ember-data'], function (exports, _emberData) {
+define('cosmic-real-estate/adapters/listing', ['exports', 'ember-data', 'cosmic-real-estate/config/environment'], function (exports, _emberData, _environment) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
   exports.default = _emberData.default.RESTAdapter.extend({
-    host: 'https://api.cosmicjs.com/v1/cosmic-real-estate',
+    host: 'https://api.cosmicjs.com/v1/' + _environment.default.cosmic.cosmicBucket,
     urlForFindAll: function urlForFindAll(modelName, snapshot) {
       var path = this.pathForType(modelName);
       return this.buildURL() + '/object-type/' + path;
@@ -1212,7 +1212,7 @@ define('cosmic-real-estate/routes/listings/listing', ['exports', 'ember'], funct
     }
   });
 });
-define('cosmic-real-estate/serializers/listing', ['exports', 'ember-data'], function (exports, _emberData) {
+define('cosmic-real-estate/serializers/listing', ['exports', 'ember-data', 'cosmic-real-estate/config/environment'], function (exports, _emberData, _environment) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -1323,7 +1323,7 @@ define('cosmic-real-estate/serializers/listing', ['exports', 'ember-data'], func
                     "children": null
                 }, {
                     "required": true,
-                    "value": json.zipcode,
+                    "value": json.zipCode,
                     "key": "zipcode",
                     "title": "zipcode",
                     "type": "text",
@@ -1423,6 +1423,6 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("cosmic-real-estate/app")["default"].create({"name":"cosmic-real-estate","version":"0.0.0+87e3984a"});
+  require("cosmic-real-estate/app")["default"].create({"name":"cosmic-real-estate","version":"0.0.0+7e16b841"});
 }
 //# sourceMappingURL=cosmic-real-estate.map

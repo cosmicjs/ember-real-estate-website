@@ -1,9 +1,9 @@
 import DS from 'ember-data';
+import ENV from 'cosmic-real-estate/config/environment';
 
 export default DS.RESTAdapter.extend({
-  host: 'https://api.cosmicjs.com/v1/cosmic-real-estate',
+  host: 'https://api.cosmicjs.com/v1/' + ENV.cosmic.cosmicBucket,
   urlForFindAll(modelName, snapshot) {
-    console.log(process.env);
     let path = this.pathForType(modelName);
     return this.buildURL() + '/object-type/' + path;
   },
