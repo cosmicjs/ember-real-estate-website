@@ -7,7 +7,7 @@ define('cosmic-real-estate/tests/app.lint-test', [], function () {
 
   QUnit.test('adapters/listing.js', function (assert) {
     assert.expect(1);
-    assert.ok(false, 'adapters/listing.js should pass ESLint\n\n13:3 - Unexpected console statement. (no-console)');
+    assert.ok(true, 'adapters/listing.js should pass ESLint\n\n');
   });
 
   QUnit.test('app.js', function (assert) {
@@ -18,6 +18,11 @@ define('cosmic-real-estate/tests/app.lint-test', [], function () {
   QUnit.test('components/real-estate-listing.js', function (assert) {
     assert.expect(1);
     assert.ok(true, 'components/real-estate-listing.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('controllers/listings.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'controllers/listings.js should pass ESLint\n\n');
   });
 
   QUnit.test('helpers/format-price.js', function (assert) {
@@ -269,6 +274,11 @@ define('cosmic-real-estate/tests/tests.lint-test', [], function () {
     assert.ok(true, 'test-helper.js should pass ESLint\n\n');
   });
 
+  QUnit.test('unit/controllers/listings-test.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/controllers/listings-test.js should pass ESLint\n\n');
+  });
+
   QUnit.test('unit/models/listing-test.js', function (assert) {
     assert.expect(1);
     assert.ok(true, 'unit/models/listing-test.js should pass ESLint\n\n');
@@ -292,6 +302,20 @@ define('cosmic-real-estate/tests/tests.lint-test', [], function () {
   QUnit.test('unit/routes/listings/listing-test.js', function (assert) {
     assert.expect(1);
     assert.ok(true, 'unit/routes/listings/listing-test.js should pass ESLint\n\n');
+  });
+});
+define('cosmic-real-estate/tests/unit/controllers/listings-test', ['ember-qunit'], function (_emberQunit) {
+  'use strict';
+
+  (0, _emberQunit.moduleFor)('controller:listings', 'Unit | Controller | listings', {
+    // Specify the other units that are required for this test.
+    // needs: ['controller:foo']
+  });
+
+  // Replace this with your real tests.
+  (0, _emberQunit.test)('it exists', function (assert) {
+    var controller = this.subject();
+    assert.ok(controller);
   });
 });
 define('cosmic-real-estate/tests/unit/models/listing-test', ['ember-qunit'], function (_emberQunit) {

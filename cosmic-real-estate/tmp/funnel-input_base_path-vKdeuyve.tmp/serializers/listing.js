@@ -2,7 +2,6 @@ import DS from 'ember-data';
 
 function buildNormalizeListing(source) {
   return {
-    id: source._id,
     slug: source.slug,
     content: source.content,
     title: source.title,

@@ -9,7 +9,7 @@
   </div>
   <div class="panel-body">
     <p>
-      <img src="{{listing.profileImage}}" class="img-thumbnail" style="background-color: #fff;height:auto"/>
+      {{#link-to 'listings.listing' listing}}<img src="{{listing.profileImage}}" class="img-thumbnail" style="background-color: #fff;height:auto"/>{{/link-to}}
 
     </p>
     <p>
