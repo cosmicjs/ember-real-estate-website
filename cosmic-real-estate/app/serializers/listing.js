@@ -1,4 +1,32 @@
 import DS from 'ember-data';
+import config from '../config/environment';
+
+function getKeys() {
+  var cosmicJs;
+  if (config.environment === "production") {
+    Ember.$.ajax('/api', {
+      data: {format: 'json'},
+      async: false,
+      success: function(data) {
+        cosmicJs = {
+          bucket: data.bucket,
+          writeKey: data.writeKey,
+          readKey: data.readKey
+        };
+      }
+    });
+  } else {
+    //config.environment === "development"
+    cosmicJs = {
+      bucket: 'cosmic-real-estate',
+      writeKey: null,
+      readKey: null
+    };
+  }
+  return cosmicJs;
+}
+
+var cosmic = getKeys();
 
 function buildNormalizeListing(source) {
   return {
@@ -39,6 +67,7 @@ export default DS.RESTSerializer.extend({
     var json = this._super(...arguments);
     let payload = {
       "slug": snapshot.id,
+      "write_key": cosmic.writeKey,
       "metafields": [
         {
             "required": true,
