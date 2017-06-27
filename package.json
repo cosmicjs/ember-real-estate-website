@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "cd cosmic-real-estate && ember build --environment=production --output-path=../public/ && node ../server.js"
+    "start": "node server.js"
   },
   "author": "",
   "license": "ISC",
